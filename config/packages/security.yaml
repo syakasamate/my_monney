@@ -3,14 +3,16 @@ security:
         App\Entity\User:
             algorithm: auto
 
+
     role_hierarchy:    
-        ROLE_ADMIN: ROLE_USER
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN,ROLE_CAISSIER]
             
     providers:
         entity_provider:
             entity:
                 class: App\Entity\User
-                property: username
+                property:  username
+       
 
     firewalls:
         dev:
@@ -31,7 +33,7 @@ security:
             anonymous: true
 
         api:
-            pattern:  ^/api_xxxxx
+            pattern:  ^/api_xxx
             stateless: true
             anonymous: false
             provider: entity_provider
