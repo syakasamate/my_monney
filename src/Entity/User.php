@@ -4,13 +4,47 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
+ *
+ *
+ * @ApiResource(
+*   collectionOperations={
+*      "get"={"security"="is_granted(['ROLE_SUPER_ADMIN'])",
+*       "normalization_context"={"groups"={"user"}},
+*},
+*       "createAdmin"={
+*              "method"="POST",
+*               "path"="users/admin/create",
+*              "security"="is_granted('ROLE_SUPER_ADMIN')",
+ *             "security_message"="Acces non autorisé seul le Super admin  peut accéder"
+ *         },
+ * 
+ *    "createCaissier"={
+*              "method"="POST",
+*               "path"="users/Caissier/create",
+*              "security"="is_granted(['ROLE_SUPER_ADMIN','ROLE_ADMIN'])",
+ *             "security_message"="Acces non autorisé seul le Super admin et l'admin peut accéder"
+ *         },
+ * 
+ * 
+ *   
+ * },
+ *  itemOperations={
+ * 
+ * }
+ * 
+* )
+ *  
+ *    
+ * 
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @ApiResource()
+ * 
  */
-class User implements UserInterface
+class User implements AdvancedUserInterface
 {
     /**
      * @ORM\Id()
@@ -20,30 +54,38 @@ class User implements UserInterface
     private $id;
 
     /**
+     * 
+     *@Groups({"user"}) 
      * @ORM\Column(type="string", length=180, unique=true)
      */
     private $username;
 
     /**
+     *@Groups({"user"})
      * @ORM\Column(type="json")
      */
     private $roles = [];
 
     /**
+     * @Groups({"user"})
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
     private $password;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Roles", inversedBy="users")
-     */
-    private $role;
+    
 
     /**
+     * @Groups({"user"})
      * @ORM\Column(type="boolean")
      */
     private $isActive;
+
+    /**
+     * @Groups({"user"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Roles", inversedBy="users")
+     */
+    private $role;
 
     public function getId(): ?int
     {
@@ -118,17 +160,7 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
-    public function getRole(): ?Roles
-    {
-        return $this->role;
-    }
-
-    public function setRole(?Roles $role): self
-    {
-        $this->role = $role;
-
-        return $this;
-    }
+   
 
     public function getIsActive(): ?bool
     {
@@ -141,4 +173,30 @@ class User implements UserInterface
 
         return $this;
     }
+
+    public function getRole(): ?Roles
+    {
+        return $this->role;
+    }
+
+    public function setRole(?Roles $role): self
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+    public function isAccountNonExpired(){
+        return true;   
+    }
+    public function isAccountNonLocked(){
+        return true;
+    }
+    public function isCredentialsNonExpired(){
+        return true;
+    }
+    public function isEnabled(){
+        return $this->isActive;
+    }
+
+
 }

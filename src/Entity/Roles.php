@@ -30,8 +30,6 @@ class Roles
      */
     private $users;
 
-  
-
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -84,8 +82,4 @@ class Roles
 
         return $this;
     }
-
-   
-
-   
 }
