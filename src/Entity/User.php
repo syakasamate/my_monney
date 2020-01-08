@@ -5,7 +5,10 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\EqualTo;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
@@ -29,11 +32,25 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 *              "security"="is_granted(['ROLE_SUPER_ADMIN','ROLE_ADMIN'])",
  *             "security_message"="Acces non autorisé seul le Super admin et l'admin peut accéder"
  *         },
- * 
- * 
- *   
  * },
  *  itemOperations={
+ *           "get"={"security"="is_granted(['ROLE_SUPER_ADMIN'])",
+ *            "normalization_context"={"groups"={"user"}}
+ * 
+ * },
+ * "modifierAdmin"={
+ *              "method"="PUT",
+ *               "path"="users/admin/modifier/{id}",
+ *              "security"="is_granted('ROLE_SUPER_ADMIN')",
+ *             "security_message"="Acces non autorisé seul le Super admin  peut accéder"
+ *         },
+ * 
+ *    "modifierCaissier"={
+ *              "method"="PUT",
+ *               "path"="users/Caissier/modifier/{id}",
+ *              "security"="is_granted(['ROLE_SUPER_ADMIN','ROLE_ADMIN'])",
+ *             "security_message"="Acces non autorisé seul le Super admin et l'admin peut accéder"
+ *         },
  * 
  * }
  * 
@@ -42,6 +59,10 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  *    
  * 
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity(
+ *  fields={"username"},
+ * 
+ *     message="ce eamil est dejas utiliser.")
  * 
  */
 class User implements AdvancedUserInterface
@@ -51,41 +72,52 @@ class User implements AdvancedUserInterface
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
-
+      private $id;
     /**
      * 
      *@Groups({"user"}) 
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\Email
      */
-    private $username;
+      private $username;
 
     /**
      *@Groups({"user"})
      * @ORM\Column(type="json")
      */
-    private $roles = [];
+     private $roles = [];
 
     /**
      * @Groups({"user"})
      * @var string The hashed password
      * @ORM\Column(type="string")
+     *@Assert\Length(min="8", minMessage="le  mode de pass de doit etre superrieur à 8 caractere")
      */
-    private $password;
-
-    
+     private $password;
 
     /**
      * @Groups({"user"})
      * @ORM\Column(type="boolean")
      */
-    private $isActive;
+     private $isActive;
 
     /**
      * @Groups({"user"})
      * @ORM\ManyToOne(targetEntity="App\Entity\Roles", inversedBy="users")
      */
-    private $role;
+     private $role;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+     private $Nom;
+    /**
+     * *@Groups({"user"})
+   * @Assert\EqualTo(propertyPath="password" , message="Tapez le meme mot de passe pou confirmé")
+   */
+    public $confirm_password;
+
+
+
 
     public function getId(): ?int
     {
@@ -196,6 +228,18 @@ class User implements AdvancedUserInterface
     }
     public function isEnabled(){
         return $this->isActive;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->Nom;
+    }
+
+    public function setNom(string $Nom): self
+    {
+        $this->Nom = $Nom;
+
+        return $this;
     }
 
 
