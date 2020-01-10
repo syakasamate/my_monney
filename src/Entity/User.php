@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\EqualTo;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -78,6 +79,7 @@ class User implements AdvancedUserInterface
      *@Groups({"user"}) 
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\Email
+     * Assert\NotBlank(message="le username ne peut pas etre vide")
      */
       private $username;
 
@@ -146,11 +148,7 @@ class User implements AdvancedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+       return[ $this->role->getLibelle()];
     }
 
     public function setRoles(array $roles): self

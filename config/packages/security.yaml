@@ -5,7 +5,9 @@ security:
 
 
     role_hierarchy:    
-        ROLE_SUPERADMIN: [ROLE_ADMIN,ROLE_CAISSIER,ROLE_SUPER_ADMIN]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN,ROLE_CAISSIER,ROLE_SUPER_ADMIN]
+        ROLE_ADMIN: [ROLE_ADMIN,ROLE_CAISSIER]
+        ROLE_CAISSIER: [ROLE_CAISSIER]   
             
     providers:
         entity_provider:
