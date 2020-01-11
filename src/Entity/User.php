@@ -18,6 +18,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  * @ApiResource(
 *   collectionOperations={
 *      "get"={"security"="is_granted(['ROLE_SUPER_ADMIN'])",
+*        "path"="users/show",
 *       "normalization_context"={"groups"={"user"}},
 *},
 *       "createAdmin"={
@@ -35,10 +36,11 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  *         },
  * },
  *  itemOperations={
- *           "get"={"security"="is_granted(['ROLE_SUPER_ADMIN'])",
- *            "normalization_context"={"groups"={"user"}}
- * 
- * },
+ *    "get"={"security"="is_granted(['ROLE_SUPER_ADMIN'])",
+ *      "path"="users/show/{id}",
+*       "normalization_context"={"groups"={"user"}},
+*},
+ *          
  * "modifierAdmin"={
  *              "method"="PUT",
  *               "path"="users/admin/modifier/{id}",
