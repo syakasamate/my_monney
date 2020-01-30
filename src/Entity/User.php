@@ -2,8 +2,13 @@
 
 namespace App\Entity;
 
+use App\Entity\Partenaire;
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\UserController;
+use App\Controller\CompteController;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -12,52 +17,34 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
-/**
+
+/** 
  *
  *
  * @ApiResource(
-*   collectionOperations={
-*      "get"={"security"="is_granted(['ROLE_SUPER_ADMIN'])",
-*        "path"="users/show",
-*       "normalization_context"={"groups"={"user"}},
-*},
-*       "createAdmin"={
-*              "method"="POST",
-*               "path"="users/admin/create",
-*              "security"="is_granted('ROLE_SUPER_ADMIN')",
- *             "security_message"="Acces non autorisé seul le Super admin  peut accéder"
- *         },
- * 
- *    "createCaissier"={
-*              "method"="POST",
-*               "path"="users/Caissier/create",
-*              "security"="is_granted(['ROLE_SUPER_ADMIN','ROLE_ADMIN'])",
- *             "security_message"="Acces non autorisé seul le Super admin et l'admin peut accéder"
- *         },
- * },
- *  itemOperations={
- *    "get"={"security"="is_granted(['ROLE_SUPER_ADMIN'])",
- *      "path"="users/show/{id}",
-*       "normalization_context"={"groups"={"user"}},
-*},
+ *  collectionOperations={
  *          
- * "modifierAdmin"={
- *              "method"="PUT",
- *               "path"="users/admin/modifier/{id}",
- *              "security"="is_granted('ROLE_SUPER_ADMIN')",
- *             "security_message"="Acces non autorisé seul le Super admin  peut accéder"
- *         },
- * 
- *    "modifierCaissier"={
- *              "method"="PUT",
- *               "path"="users/Caissier/modifier/{id}",
- *              "security"="is_granted(['ROLE_SUPER_ADMIN','ROLE_ADMIN'])",
- *             "security_message"="Acces non autorisé seul le Super admin et l'admin peut accéder"
- *         },
- * 
- * }
- * 
-* )
+ *         "GET"={
+ *               "access_control"="is_granted('VIEW', object)",
+
+*               },
+*               "POST"={
+ *                  "access_control"="is_granted('ADD', object)",
+*                    "controller"=CompteController::class,
+
+*                }
+* 
+*     },
+*  itemOperations={
+*          "GET"={
+*                   "access_control"="is_granted('VIEW',  previous_object)",
+*               },
+*          "put"={
+ *              "access_control"="is_granted('EDIT', previous_object)",
+ *          },
+ *     },
+ *  
+ * )
  *  
  *    
  * 
@@ -68,17 +55,18 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  *     message="ce eamil est dejas utiliser.")
  * 
  */
-class User implements AdvancedUserInterface
+class User implements UserInterface  
 {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * 
      */
       private $id;
     /**
      * 
-     *@Groups({"user"}) 
+     * @Groups({"read", "write"}) 
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\Email
      * Assert\NotBlank(message="le username ne peut pas etre vide")
@@ -86,13 +74,13 @@ class User implements AdvancedUserInterface
       private $username;
 
     /**
-     *@Groups({"user"})
+     * 
      * @ORM\Column(type="json")
      */
      private $roles = [];
 
     /**
-     * @Groups({"user"})
+     *  @Groups({"read", "write"})
      * @var string The hashed password
      * @ORM\Column(type="string")
      *@Assert\Length(min="8", minMessage="le  mode de pass de doit etre superrieur à 8 caractere")
@@ -100,29 +88,42 @@ class User implements AdvancedUserInterface
      private $password;
 
     /**
-     * @Groups({"user"})
+     *  @Groups({"read", "write"})
      * @ORM\Column(type="boolean")
      */
      private $isActive;
 
     /**
-     * @Groups({"user"})
+     *  @Groups({"read", "write"})
      * @ORM\ManyToOne(targetEntity="App\Entity\Roles", inversedBy="users")
      */
      private $role;
     /**
+     *  @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
      private $Nom;
-    /**
-     * *@Groups({"user"})
-   * @Assert\EqualTo(propertyPath="password" , message="Tapez le meme mot de passe pou confirmé")
-   */
-    public $confirm_password;
+
+     /**
+      * @ORM\OneToMany(targetEntity="App\Entity\Compte", mappedBy="usercreateur")
+      */
+     private $comptes;
+
+     
+
+    
+   
+
+   
 
 
 
 
+    public function __construct()
+    {
+        $this->usercreateur = new ArrayCollection();
+        $this->comptes = new ArrayCollection();
+    }
     public function getId(): ?int
     {
         return $this->id;
@@ -217,19 +218,7 @@ class User implements AdvancedUserInterface
 
         return $this;
     }
-    public function isAccountNonExpired(){
-        return true;   
-    }
-    public function isAccountNonLocked(){
-        return true;
-    }
-    public function isCredentialsNonExpired(){
-        return true;
-    }
-    public function isEnabled(){
-        return $this->isActive;
-    }
-
+   
     public function getNom(): ?string
     {
         return $this->Nom;
@@ -242,5 +231,47 @@ class User implements AdvancedUserInterface
         return $this;
     }
 
+    /**
+     * @return Collection|Compte[]
+     */
+    public function getComptes(): Collection
+    {
+        return $this->comptes;
+    }
 
+    public function addCompte(Compte $compte): self
+    {
+        if (!$this->comptes->contains($compte)) {
+            $this->comptes[] = $compte;
+            $compte->setUsercreateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompte(Compte $compte): self
+    {
+        if ($this->comptes->contains($compte)) {
+            $this->comptes->removeElement($compte);
+            // set the owning side to null (unless already changed)
+            if ($compte->getUsercreateur() === $this) {
+                $compte->setUsercreateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+   
+   
+
+   
+
+    
+
+
+
+   
+
+    
 }

@@ -47,4 +47,13 @@ class RolesRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findByLibelle($value): ?Roles
+    {
+        return $this->createQueryBuilder('r')
+        ->andWhere('r.libelle = :val')
+        ->setParameter('val', $value)
+        ->getQuery()
+        ->getOneOrNullResult()
+        ;
+    }
 }

@@ -26,7 +26,7 @@ class Roles
     private $libelle;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="role")
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="role",cascade={"persist"})
      */
     private $users;
 

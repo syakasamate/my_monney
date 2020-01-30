@@ -44,8 +44,8 @@ class AppFixtures extends Fixture
         ->setIsActive(true)
         ->setPassword($this->encoder->encodePassword($user,"syaka"))
         ->setRoles(["ROLE_SUPER_ADMIN"])
-        ->setRole($role_superadmin);
-        
+        ->setRole($role_superadmin)
+        ->setNom("syaka");
         $manager->persist($user);
         $manager->flush();
         
