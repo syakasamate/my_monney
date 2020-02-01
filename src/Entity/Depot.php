@@ -12,15 +12,24 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass="App\Repository\DepotRepository")
  * @ApiResource(
  * collectionOperations={
- *          
  *         "GET"={
-*                   
- *                 
+ *               "access_control"="is_granted('VIEW', object)",
+
 *               },
-*               "post"={
-*                    "controller"=DepotController::class,
+*               "POST"={
+ *                  "access_control"="is_granted('ADD', object)",
+*                    "controller"=CompteController::class,
+
 *                }
- * 
+* 
+*     },
+*  itemOperations={
+*          "GET"={
+*                "access_control"="is_granted('VIEW',  previous_object)",
+*               },
+*          "put"={
+ *              "access_control"="is_granted('EDIT', previous_object)",
+ *          },
  *     },
  * )
  */

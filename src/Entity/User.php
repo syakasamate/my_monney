@@ -30,7 +30,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 *               },
 *               "POST"={
  *                  "access_control"="is_granted('ADD', object)",
-*                    "controller"=CompteController::class,
+*                    "controller"=UserController::class,
 
 *                }
 * 

@@ -26,19 +26,25 @@ private $repo;
 
     public function __invoke(Compte $data)
     {
-    
+  
+
+  
+       //si le partenaire n'existe pas 
+         if($data->getPartenaires()!=null){
         // je crypte le mot de passe du propriaite du compte
        $userPasswor=$this->userPasswordEncoder->encodePassword($data->getPartenaires()->getUsers(), $data->getPartenaires()->getUsers()->getPassword());
        $data->getPartenaires()->getUsers()->SetPassword($userPasswor);
 
-       //j'initialise  le 
+       //j'initialise  le  Partenire
        $partenaire=$this->repo->findByLibelle("ROLE_PARTENAIRE");
        $data->getPartenaires()->getUsers()->setRole($partenaire);
+         }
+
 
         //j'initialise  le solde à 5000 00  l'or de la creation;
         $solde=$data->getDepots()[0]->getMontant();
         if($solde<500000){
-        throw new Exception("le montant desposer ne doit pas etre inferieur à 50000");
+        throw new Exception("le montant à deposer ne doit pas etre inferieur à 50000");
         }else{
 
         
@@ -55,4 +61,5 @@ private $repo;
         }
     } 
 }
+
 ?>

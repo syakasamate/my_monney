@@ -19,14 +19,25 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * collectionOperations={
  *          
  *         "GET"={
-*                   
- *                 
+ *               "access_control"="is_granted('VIEW', object)",
+
 *               },
-*               "post"={
+*               "POST"={
+ *                  "access_control"="is_granted('ADD', object)",
 *                    "controller"=CompteController::class,
+
 *                }
- * 
+* 
+*     },
+*  itemOperations={
+*          "GET"={
+*                   "access_control"="is_granted('VIEW',  previous_object)",
+*               },
+*          "put"={
+ *              "access_control"="is_granted('EDIT', previous_object)",
+ *          },
  *     },
+ *  
  * )
  */
 class Compte

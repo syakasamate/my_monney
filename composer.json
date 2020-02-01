@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "api-platform/api-pack": "^1.2",
         "easycorp/easyadmin-bundle": "^2.3",
+        "laminas/laminas-code": "^3.4",
         "lexik/jwt-authentication-bundle": "^2.6",
         "symfony/console": "4.3.*",
         "symfony/dotenv": "4.3.*",
@@ -14,6 +15,7 @@
         "symfony/framework-bundle": "4.3.*",
         "symfony/orm-pack": "^1.0",
         "symfony/security-bundle": "4.3.*",
+        "symfony/translation": "4.3.*",
         "symfony/yaml": "4.3.*"
     },
     "require-dev": {
