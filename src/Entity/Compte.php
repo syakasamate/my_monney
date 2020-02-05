@@ -14,8 +14,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CompteRepository")
  * @ApiResource(
- *normalizationContext={"groups"={"read"}},
- *denormalizationContext={"groups"={"write"}},
+ *  normalizationContext={"groups"={"read"}},
+ *   denormalizationContext={"groups"={"write"}},
  * collectionOperations={
  *          
  *         "GET"={
@@ -23,7 +23,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 *               },
 *               "POST"={
- *                  "access_control"="is_granted('ADD', object)",
 *                    "controller"=CompteController::class,
 
 *                }
@@ -87,12 +86,15 @@ class Compte
      */
     private $usercreateur;
 
-   
-  
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\AffectCompte", mappedBy="comptes")
+     */
+    private $affectComptes;
 
     public function __construct()
     {
         $this->depots = new ArrayCollection();
+        $this->affectComptes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -193,6 +195,38 @@ class Compte
 
         return $this;
     }
+
+    /**
+     * @return Collection|AffectCompte[]
+     */
+    public function getAffectComptes(): Collection
+    {
+        return $this->affectComptes;
+    }
+
+    public function addAffectCompte(AffectCompte $affectCompte): self
+    {
+        if (!$this->affectComptes->contains($affectCompte)) {
+            $this->affectComptes[] = $affectCompte;
+            $affectCompte->setComptes($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAffectCompte(AffectCompte $affectCompte): self
+    {
+        if ($this->affectComptes->contains($affectCompte)) {
+            $this->affectComptes->removeElement($affectCompte);
+            // set the owning side to null (unless already changed)
+            if ($affectCompte->getComptes() === $this) {
+                $affectCompte->setComptes(null);
+            }
+        }
+
+        return $this;
+    }
+    
 
     
 }

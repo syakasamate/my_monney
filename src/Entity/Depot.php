@@ -49,8 +49,6 @@ class Depot
      */
     private $montant;
 
-    
-
     /**
      * 
      * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="depots",cascade={"persist"})

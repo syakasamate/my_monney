@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use VARIANT;
 
 class CompteController{
 
@@ -26,18 +27,18 @@ private $repo;
 
     public function __invoke(Compte $data)
     {
-  
 
-  
        //si le partenaire n'existe pas 
          if($data->getPartenaires()!=null){
         // je crypte le mot de passe du propriaite du compte
-       $userPasswor=$this->userPasswordEncoder->encodePassword($data->getPartenaires()->getUsers(), $data->getPartenaires()->getUsers()->getPassword());
-       $data->getPartenaires()->getUsers()->SetPassword($userPasswor);
-
+       $userPasswor=$this->userPasswordEncoder->encodePassword($data->getPartenaires()->getUsers()[0],
+        $data->getPartenaires()->getUsers()[0]->getPassword());
+       $data->getPartenaires()->getUsers()[0]->SetPassword($userPasswor);
+         
+      
        //j'initialise  le  Partenire
        $partenaire=$this->repo->findByLibelle("ROLE_PARTENAIRE");
-       $data->getPartenaires()->getUsers()->setRole($partenaire);
+       $data->getPartenaires()->getUsers()[0]->setRole($partenaire);
          }
 
 
@@ -52,10 +53,12 @@ private $repo;
 
 
         //j'initialise le user createur ici 
+        //  $usercreateur =$this->tokenStorage->getToken()->getUser()->getROL;
+         // $data->addUser($usercreateur);
+        //j'initialise le user createur ici 
          // $role=$this->repo->findAll()[3]->getLibelle();
           $usercreateur =$this->tokenStorage->getToken()->getUser();
           $data->setUsercreateur($usercreateur);
-
 
         return $data;
         }

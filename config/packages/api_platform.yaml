@@ -10,3 +10,5 @@ api_platform:
         json:     ['application/json']
         html:     ['text/html']
         jsonhal:  ['application/hal+json']
+        form:
+            mime_types: ['multipart/form-data']

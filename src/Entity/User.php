@@ -15,14 +15,15 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 
 /** 
  *
  *
  * @ApiResource(
+ * 
  *  collectionOperations={
+ * 
  *          
  *         "GET"={
  *               "access_control"="is_granted('VIEW', object)",
@@ -58,6 +59,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 class User implements UserInterface  
 {
     /**
+     * 
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -104,25 +106,30 @@ class User implements UserInterface
      */
      private $Nom;
 
+    
+     
+     
+
+     /**
+      * @ORM\ManyToOne(targetEntity="App\Entity\Partenaire", inversedBy="users")
+      */
+     private $partenaire;
+
      /**
       * @ORM\OneToMany(targetEntity="App\Entity\Compte", mappedBy="usercreateur")
       */
      private $comptes;
 
-     
-
+     /**
+      * @ORM\OneToMany(targetEntity="App\Entity\AffectCompte", mappedBy="users")
+      */
+     private $affectComptes;
     
-   
-
-   
-
-
-
 
     public function __construct()
     {
-        $this->usercreateur = new ArrayCollection();
         $this->comptes = new ArrayCollection();
+        $this->affectComptes = new ArrayCollection();
     }
     public function getId(): ?int
     {
@@ -206,6 +213,7 @@ class User implements UserInterface
 
         return $this;
     }
+    
 
     public function getRole(): ?Roles
     {
@@ -227,6 +235,21 @@ class User implements UserInterface
     public function setNom(string $Nom): self
     {
         $this->Nom = $Nom;
+
+        return $this;
+    }
+
+    
+
+
+    public function getPartenaire(): ?Partenaire
+    {
+        return $this->partenaire;
+    }
+
+    public function setPartenaire(?Partenaire $partenaire): self
+    {
+        $this->partenaire = $partenaire;
 
         return $this;
     }
@@ -262,16 +285,42 @@ class User implements UserInterface
         return $this;
     }
 
-   
-   
+    /**
+     * @return Collection|AffectCompte[]
+     */
+    public function getAffectComptes(): Collection
+    {
+        return $this->affectComptes;
+    }
+
+    public function addAffectCompte(AffectCompte $affectCompte): self
+    {
+        if (!$this->affectComptes->contains($affectCompte)) {
+            $this->affectComptes[] = $affectCompte;
+            $affectCompte->setUsers($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAffectCompte(AffectCompte $affectCompte): self
+    {
+        if ($this->affectComptes->contains($affectCompte)) {
+            $this->affectComptes->removeElement($affectCompte);
+            // set the owning side to null (unless already changed)
+            if ($affectCompte->getUsers() === $this) {
+                $affectCompte->setUsers(null);
+            }
+        }
+
+        return $this;
+    }
 
    
 
-    
+  
 
-
-
-   
+  
 
     
 }

@@ -25,10 +25,23 @@ class JWTCreatedListener
      *
      * @return void
      */
+
     public function onJWTCreated(JWTCreatedEvent $event)
     {
         /** @var $user \AppBundle\Entity\User */
         $user = $event->getUser();
+        $user1=$user->getPartenaire();
+         $id1=$user1->getId();
+         $id2=$user->getPartenaire()->getId();
+
+       if(($id1==$id2) && (!$user1->getUsers()[0]->getIsActive())){
+       if(!$user->getIsActive()  ||$user->getIsActive() ){
+        throw new  DisabledException('Users account is ');
+         }
+        }
+       
+
+
         if(!$user->getIsActive()){
             throw new  DisabledException('Users account is ');
         }

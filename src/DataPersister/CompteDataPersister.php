@@ -34,21 +34,17 @@ return $data instanceof Compte;
 public function persist($data)
 {
     
-/*if($data->getSolde()<500000){
-      throw new Exception(" le solde ne doit pas etre inferieure à 500000");
-  }else{*/
+
  $num=$this->repo->CompteNum();
-        foreach ($num as $k ) {
-           $k; 
-}
- $numero = 'NCT' . sprintf("%06d", $k+ 1) ;
+ $numero = 'NCT' . sprintf("%06d", $num[1]+ 1) ;
 $data->setNumero($numero);
+
 $data->setDateCreation(new \DateTime());
 $this->entityManager->persist($data);
 $this->entityManager->flush();
     
 }
-//}
+
 public function remove($data)
 {
 $this->entityManager->remove($data);

@@ -17,6 +17,7 @@ class UserVoter extends Voter
     const ROLE_SUPER_ADMIN ='ROLE_SUPER_ADMIN';
     const  ROLE_ADMIN='ROLE_ADMIN';
     const ROLE_CAISSIER='ROLE_CAISSIER';
+    const ROLE_PARTENAIRE="ROLE_PARTENAIRE";
     private $security;
     private $decisionManager;
     protected $tokenStorage;
@@ -56,6 +57,15 @@ class UserVoter extends Voter
 
             if ($subject->getRoles()[0]==self::ROLE_SUPER_ADMIN || $subject->getRoles()[0]==self::ROLE_ADMIN){
                 return false;
+
+        }
+                
+        }elseif($this->tokenStorage->getToken()->getRoles()[0]==self::ROLE_PARTENAIRE){
+
+            if ($subject->getRoles()[0]==self::ROLE_SUPER_ADMIN || $subject->getRoles()[0]==self::ROLE_ADMIN|| $subject->getRoles()[0]==self::ROLE_PARTENAIRE
+            || $subject->getRoles()[0]==self::ROLE_CAISSIER)
+            {
+                return false;
             }
         }
         $user = $token->getUser();
@@ -77,7 +87,7 @@ class UserVoter extends Voter
 
 
             case'ADD':
-            if ($this->security->isGranted(self::ROLE_ADMIN)){
+            if ($this->security->isGranted(self::ROLE_ADMIN) || $this->security->isGranted(self::ROLE_PARTENAIRE)){
                 return true;
             }
             break;
@@ -89,10 +99,13 @@ class UserVoter extends Voter
             break;
 
             return false;
+
+            default:
+
+            throw new \Exception(sprintf('Impossible d\'accede "%s"', $attribute));
+        break;
             
         }
-
-
-        throw new \Exception(sprintf('Impossible d\'accede "%s"', $attribute));
+      
     }
 }

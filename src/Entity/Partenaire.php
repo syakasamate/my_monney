@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\PartenaireController;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,7 +12,31 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PartenaireRepository")
  * @ApiResource(
+ * normalizationContext={"groups"={"read"}},
+ *denormalizationContext={"groups"={"write"}},
+   
+ *  collectionOperations={
  * 
+ *          
+ *         "GET"={
+ *               "access_control"="is_granted('VIEW', object)",
+
+*               },
+*               "POST"={
+*                    "controller"=PartenaireController::class,
+
+*                }
+* 
+*     },
+*  itemOperations={
+*          "GET"={
+*                   "access_control"="is_granted('VIEW',  previous_object)",
+*               },
+*          "put"={
+ *              "access_control"="is_granted('EDIT', previous_object)",
+ *          },
+ *     },
+ *   
  * )
  */
 class Partenaire
@@ -45,15 +70,15 @@ class Partenaire
 
     /**
      * @Groups({"read", "write"})
-     * @ORM\OneToOne(targetEntity="App\Entity\User", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="partenaire",cascade={"persist"})
      */
     private $users;
 
-     
 
     public function __construct()
     {
         $this->comptes = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -116,18 +141,50 @@ class Partenaire
         return $this;
     }
 
-    public function getUsers(): ?User
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
     {
         return $this->users;
     }
 
-    public function setUsers(?User $users): self
+    public function addUser(User $user): self
     {
-        $this->users = $users;
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setPartenaire($this);
+        }
 
         return $this;
     }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            // set the owning side to null (unless already changed)
+            if ($user->getPartenaire() === $this) {
+                $user->setPartenaire(null);
+            }
+        }
+
+        return $this;
+    }
+
    
 
+    }
+
+  
+
     
-}
+
+  
+
+    
+    
+
+    
+
+
