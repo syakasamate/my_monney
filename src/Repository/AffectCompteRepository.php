@@ -47,4 +47,13 @@ class AffectCompteRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function user($user): ?AffectCompte
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.users= :val')
+            ->setParameter('val', $user)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

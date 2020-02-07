@@ -15,7 +15,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * @ORM\Entity(repositoryClass="App\Repository\CompteRepository")
  * @ApiResource(
  *  normalizationContext={"groups"={"read"}},
- *   denormalizationContext={"groups"={"write"}},
+ *  denormalizationContext={"groups"={"write"}},
  * collectionOperations={
  *          
  *         "GET"={
@@ -91,10 +91,26 @@ class Compte
      */
     private $affectComptes;
 
+   
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="comptesEnv")
+     */
+    private $transaction;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="comptesEnv")
+     */
+    private $transactions;
+
+   
+
     public function __construct()
     {
         $this->depots = new ArrayCollection();
         $this->affectComptes = new ArrayCollection();
+        $this->transaction = new ArrayCollection();
+        $this->transactions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -226,7 +242,40 @@ class Compte
 
         return $this;
     }
-    
+
+    /**
+     * @return Collection|Transaction[]
+     */
+    public function getTransactions(): Collection
+    {
+        return $this->transactions;
+    }
+
+    public function addTransaction(Transaction $transaction): self
+    {
+        if (!$this->transactions->contains($transaction)) {
+            $this->transactions[] = $transaction;
+            $transaction->setComptesEnv($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransaction(Transaction $transaction): self
+    {
+        if ($this->transactions->contains($transaction)) {
+            $this->transactions->removeElement($transaction);
+            // set the owning side to null (unless already changed)
+            if ($transaction->getComptesEnv() === $this) {
+                $transaction->setComptesEnv(null);
+            }
+        }
+
+        return $this;
+    }
+
+  
+
 
     
 }

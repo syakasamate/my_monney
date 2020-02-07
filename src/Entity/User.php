@@ -30,9 +30,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 *               },
 *               "POST"={
- *                  "access_control"="is_granted('ADD', object)",
-*                    "controller"=UserController::class,
-
+*                   "controller"=UserController::class,
+*                    "access_control"="is_granted('ADD', object)",
 *                }
 * 
 *     },
@@ -124,12 +123,24 @@ class User implements UserInterface
       * @ORM\OneToMany(targetEntity="App\Entity\AffectCompte", mappedBy="users")
       */
      private $affectComptes;
+
+     /**
+      * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="userEnv")
+      */
+     private $transactions;
+
+     /**
+      * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="userRet")
+      */
+     private $transaction;
     
 
     public function __construct()
     {
         $this->comptes = new ArrayCollection();
         $this->affectComptes = new ArrayCollection();
+        $this->transactions = new ArrayCollection();
+        $this->transaction = new ArrayCollection();
     }
     public function getId(): ?int
     {
@@ -314,6 +325,45 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Transaction[]
+     */
+    public function getTransactions(): Collection
+    {
+        return $this->transactions;
+    }
+
+    public function addTransaction(Transaction $transaction): self
+    {
+        if (!$this->transactions->contains($transaction)) {
+            $this->transactions[] = $transaction;
+            $transaction->setUserEnv($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransaction(Transaction $transaction): self
+    {
+        if ($this->transactions->contains($transaction)) {
+            $this->transactions->removeElement($transaction);
+            // set the owning side to null (unless already changed)
+            if ($transaction->getUserEnv() === $this) {
+                $transaction->setUserEnv(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Transaction[]
+     */
+    public function getTransaction(): Collection
+    {
+        return $this->transaction;
     }
 
    

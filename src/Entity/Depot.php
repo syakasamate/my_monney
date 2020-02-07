@@ -18,7 +18,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 *               },
 *               "POST"={
  *                  "access_control"="is_granted('ADD', object)",
-*                    "controller"=CompteController::class,
 
 *                }
 * 

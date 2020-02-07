@@ -30,18 +30,15 @@ private $validator;
     {
         if ($data->getPassword()) {
             $data->setPassword(
-            $this->userPasswordEncoder->encodePassword($data, $data->getPassword())
+                $this->userPasswordEncoder->encodePassword($data, $data->getPassword())
             );
             $data->eraseCredentials();
          }
-         
 
             $partenaire =$this->tokenStorage->getToken()->getUser()->getPartenaire();
             $data->setPartenaire($partenaire);
   
-         
-         
-
+           
         return $data;
     }
 }

@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\Transaction;
+use App\Entity\Tarif;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
- * @method Transaction|null find($id, $lockMode = null, $lockVersion = null)
- * @method Transaction|null findOneBy(array $criteria, array $orderBy = null)
- * @method Transaction[]    findAll()
- * @method Transaction[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Tarif|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Tarif|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Tarif[]    findAll()
+ * @method Tarif[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TransactionRepository extends ServiceEntityRepository
+class TarifRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Transaction::class);
+        parent::__construct($registry, Tarif::class);
     }
 
     // /**
-    //  * @return Transaction[] Returns an array of Transaction objects
+    //  * @return Tarif[] Returns an array of Tarif objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class TransactionRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Transaction
+    public function findOneBySomeField($value): ?Tarif
     {
         return $this->createQueryBuilder('t')
             ->andWhere('t.exampleField = :val')
@@ -47,13 +47,4 @@ class TransactionRepository extends ServiceEntityRepository
         ;
     }
     */
-    public function numeroAction()
-    {
-        $numero = mt_rand(0, 1000000000000000);
-
-        return $numero;
-        
-    }
-
-   
 }
