@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\RetraitController;
 use App\Controller\TransactionController;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -30,7 +31,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 *                   "access_control"="is_granted('VIEW',  previous_object)",
 *               },
 *          "put"={
- *              "access_control"="is_granted('EDIT', previous_object)",
+ *              "controller"=RetraitController::class,
  *          },
  *     },
  *  
@@ -92,7 +93,7 @@ class Transaction
     private $prenomBenef;
 
     /**
-     *
+     *@Groups({"read1", "write1"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $cnibenef;
@@ -167,10 +168,16 @@ class Transaction
     private $comptesEnv;
 
     /**
+     * @Groups({"read1", "write1"})
      * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="transactions")
      * @ORM\JoinColumn(nullable=true)
      */
     private $comptesRet;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $status;
 
    
 
@@ -428,6 +435,18 @@ class Transaction
     public function setComptesRet(?Compte $comptesRet): self
     {
         $this->comptesRet = $comptesRet;
+
+        return $this;
+    }
+
+    public function getStatus(): ?bool
+    {
+        return $this->status;
+    }
+
+    public function setStatus(bool $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }

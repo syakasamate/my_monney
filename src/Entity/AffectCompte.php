@@ -2,12 +2,32 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\AffectCompteController;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * collectionOperations={
+ *         "GET"={
+ *               "access_control"="is_granted('VIEW', object)",
+
+*               },
+*               "POST"={
+ *                  "controller"=AffectCompteController::class,
+
+*                }
+* 
+*     },
+*  itemOperations={
+*          "GET"={
+*                "access_control"="is_granted('VIEW',  previous_object)",
+*               },
+*          "put"={
+ *              "access_control"="is_granted('EDIT', previous_object)",
+ *          },
+ *     },)
  * @ORM\Entity(repositoryClass="App\Repository\AffectCompteRepository")
  */
 class AffectCompte
@@ -20,12 +40,12 @@ class AffectCompte
     private $id;
 
     /**
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $date_debut;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
     private $date_fin;
 

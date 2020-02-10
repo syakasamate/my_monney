@@ -19,7 +19,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * collectionOperations={
  *          
  *         "GET"={
- *               "access_control"="is_granted('VIEW', object)",
 
 *               },
 *               "POST"={
@@ -72,6 +71,7 @@ class Compte
     /**
      * @Groups({"read", "write"})
      * @ORM\ManyToOne(targetEntity="App\Entity\Partenaire", inversedBy="comptes",cascade={"persist"})
+     *@ApiFilter(SearchFilter::class, properties={"partenaires.ninea"})
      */
     private $partenaires;
 

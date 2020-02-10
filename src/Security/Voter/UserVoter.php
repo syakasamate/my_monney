@@ -47,18 +47,25 @@ class UserVoter extends Voter
         if ($this->decisionManager->decide($token, array(self::ROLE_SUPER_ADMIN))) {
             return true;
         }
-        if($this->tokenStorage->getToken()->getRoles()[0]==self::ROLE_CAISSIER){
 
+        
+        if($this->tokenStorage->getToken()->getRoles()[0]==self::ROLE_CAISSIER){
             if ($subject->getRoles()[0]==self::ROLE_SUPER_ADMIN || $subject->getRoles()[0]==self::ROLE_ADMIN
              ||$subject->getRoles()[0]==self::ROLE_CAISSIER){
                 return false;
             }
+
+
+
         }elseif($this->tokenStorage->getToken()->getRoles()[0]==self::ROLE_ADMIN){
 
             if ($subject->getRoles()[0]==self::ROLE_SUPER_ADMIN || $subject->getRoles()[0]==self::ROLE_ADMIN){
                 return false;
 
         }
+
+
+
                 
         }elseif($this->tokenStorage->getToken()->getRoles()[0]==self::ROLE_PARTENAIRE){
 
@@ -68,6 +75,8 @@ class UserVoter extends Voter
                 return false;
             }
         }
+
+        
         $user = $token->getUser();
         // if the user is anonymous, do not grant access
         if (!$user instanceof User) {

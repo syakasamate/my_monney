@@ -47,4 +47,14 @@ class PartenaireRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function PartExist($value): ?Partenaire
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.id= :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

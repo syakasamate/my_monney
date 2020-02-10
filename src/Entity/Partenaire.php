@@ -74,6 +74,11 @@ class Partenaire
      */
     private $users;
 
+    /**@Groups({"read", "write"})
+     * @ORM\OneToOne(targetEntity="App\Entity\Contrat", cascade={"persist", "remove"})
+     */
+    private $contrat;
+
 
     public function __construct()
     {
@@ -168,6 +173,18 @@ class Partenaire
                 $user->setPartenaire(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getContrat(): ?Contrat
+    {
+        return $this->contrat;
+    }
+
+    public function setContrat(Contrat $contrat): self
+    {
+        $this->contrat = $contrat;
 
         return $this;
     }

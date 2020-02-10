@@ -56,4 +56,28 @@ class AffectCompteRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
+    public function    DateBetween($date)
+    {
+        return $this->createQueryBuilder('a')
+             ->where('a.dedebut< :date')
+            ->andWhere('a.datefin> :date')
+            ->setParameter('date', $date)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+    
+    public function   affectuser($value): ?AffectCompte
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.users =:val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+
+
 }
