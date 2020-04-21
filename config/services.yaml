@@ -35,3 +35,9 @@ services:
     
     ApiPlatform\Core\EventListener\DeserializeListener:
         alias: 'api_platform.listener.request.deserialize'
+
+    api.converter.contact_picture:
+        class: AppBundle\Request\ContactPictureParamConverter
+        arguments: ['@fos_rest.validator']
+        tags:
+             - { name: request.param_converter, converter: api.converter.contact_picture }

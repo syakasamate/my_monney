@@ -3,45 +3,60 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\PartController;
 use App\Controller\RetraitController;
 use App\Controller\TransactionController;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ApiResource(
  * normalizationContext={"groups"={"read1"}},
  *  denormalizationContext={"groups"={"write1"}},
- *collectionOperations={
- *          
- *         "GET"={
+ * 
 
+ *collectionOperations={
+ *               "get"={"method"="GET"},
+*          "get_part"={
+*          "path"="/transaction/part",
+*         "method"="GET",
+*        "controller"=PartController::class,
 *               },
-*               "POST"={
+*               "POST"={ 
 *                    "controller"=TransactionController::class,
 
-*                }
-* 
+*                },
+*          
+
 *     },
 *  itemOperations={
 *          "GET"={
-*                   "access_control"="is_granted('VIEW',  previous_object)",
 *               },
 *          "put"={
+*             "normalization_context"={"groups"={"read2"}},
+ *            "denormalization_context"={"groups"={"write2"}},
+
  *              "controller"=RetraitController::class,
  *          },
  *     },
- *  
 *)
+* @ApiFilter(SearchFilter::class, properties={"code": "exact"}),
  * @ORM\Entity(repositoryClass="App\Repository\TransactionRepository")
  * @UniqueEntity (fields = {"code"}, message = "le code doit être unique")
+ *@ApiFilter(DateFilter::class, properties={"dateEnv"})
+
+ * 
  */
 class Transaction
 {
     /**
+     *@Groups({"read1", "write1"})
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -50,6 +65,7 @@ class Transaction
 
     
     /**
+     *@Groups({"read1", "write1"})
      * @ORM\Column(type="string", length=255)
      */
     private $code;
@@ -70,7 +86,7 @@ class Transaction
 
     /**
      *@Groups({"read1", "write1"})
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="date")
      */
     private $dateEnv;
 
@@ -129,6 +145,7 @@ class Transaction
    
 
     /**
+     *@Groups({"read1"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $dateRetret;
@@ -161,23 +178,30 @@ class Transaction
     private $partEtat;
 
     /**
-     * @Groups({"read1", "write1"})
+     *
      * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="transactions")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
+     * @Groups({"read1", "write1"})
      */
     private $comptesEnv;
 
-    /**
-     * @Groups({"read1", "write1"})
-     * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="transactions")
-     * @ORM\JoinColumn(nullable=true)
-     */
-    private $comptesRet;
+   
 
     /**
+     * @Groups({"read1"})
      * @ORM\Column(type="boolean")
      */
     private $status;
+
+    
+
+    /**
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="transaction")
+     *@ORM\JoinColumn(nullable=true)
+     * @Groups({"read2", "write2"})
+     */
+    private $comptesRet;
 
    
 
@@ -427,17 +451,7 @@ class Transaction
         return $this;
     }
 
-    public function getComptesRet(): ?Compte
-    {
-        return $this->comptesRet;
-    }
-
-    public function setComptesRet(?Compte $comptesRet): self
-    {
-        $this->comptesRet = $comptesRet;
-
-        return $this;
-    }
+   
 
     public function getStatus(): ?bool
     {
@@ -447,6 +461,30 @@ class Transaction
     public function setStatus(bool $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getTransaction(): ?Compte
+    {
+        return $this->transaction;
+    }
+
+    public function setTransaction(?Compte $transaction): self
+    {
+        $this->transaction = $transaction;
+
+        return $this;
+    }
+
+    public function getComptesRet(): ?Compte
+    {
+        return $this->comptesRet;
+    }
+
+    public function setComptesRet(?Compte $comptesRet): self
+    {
+        $this->comptesRet = $comptesRet;
 
         return $this;
     }

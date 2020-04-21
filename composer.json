@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "api-platform/api-pack": "^1.2",
         "easycorp/easyadmin-bundle": "^2.3",
+        "ismaeltoe/osms": "^2.0",
         "laminas/laminas-code": "^3.4",
         "lexik/jwt-authentication-bundle": "^2.6",
         "symfony/console": "4.3.*",
@@ -17,7 +18,8 @@
         "symfony/security-bundle": "4.3.*",
         "symfony/translation": "4.3.*",
         "symfony/var-dumper": "4.3.*",
-        "symfony/yaml": "4.3.*"
+        "symfony/yaml": "4.3.*",
+        "twilio/sdk": "^6.0"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",

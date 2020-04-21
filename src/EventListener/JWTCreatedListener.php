@@ -44,7 +44,8 @@ class JWTCreatedListener
         $payload = array_merge(
             $event->getData(),
             [
-                'password' => $user->getPassword()
+                'password' => $user->getPassword(),
+                'nom' => $user->getNom()
             ]
         );
 

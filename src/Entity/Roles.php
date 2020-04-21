@@ -2,13 +2,40 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+use App\Controller\listeAController;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *   collectionOperations={
+ *"listRSup"={
+ *         "method"="GET",
+ *         "path"="/listeSup",
+ *          "controller"=listeAController::class,
+
+ * },
+ * 
+ *         "GET"={
+ *              
+  *                    "controller"=getUserController::class,                
+*               },
+*               "POST"={
+*                   "controller"=UserController::class,
+*   
+*                }
+* 
+*     },
+*  itemOperations={
+*          "GET"={
+*               },
+*          
+*          "put"={
+*       }
+ *     },
+ *  )
  * @ORM\Entity(repositoryClass="App\Repository\RolesRepository")
  */
 class Roles

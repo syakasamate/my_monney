@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Compte;
 use Exception;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Security;
@@ -18,6 +19,9 @@ class UserVoter extends Voter
     const  ROLE_ADMIN='ROLE_ADMIN';
     const ROLE_CAISSIER='ROLE_CAISSIER';
     const ROLE_PARTENAIRE="ROLE_PARTENAIRE";
+    const ROLE_USER_PARTENAIRE="ROLE_USER_PARTENAIRE";
+    const ROLE_ADMIN_PARTENAIRE="ROLE_ADMIN_PARTENAIRE";
+    const NON="Acces Non Autorisé!!!";
     private $security;
     private $decisionManager;
     protected $tokenStorage;
@@ -44,23 +48,22 @@ class UserVoter extends Voter
         */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        if ($this->decisionManager->decide($token, array(self::ROLE_SUPER_ADMIN))) {
-            return true;
-        }
 
-        
-        if($this->tokenStorage->getToken()->getRoles()[0]==self::ROLE_CAISSIER){
-            if ($subject->getRoles()[0]==self::ROLE_SUPER_ADMIN || $subject->getRoles()[0]==self::ROLE_ADMIN
-             ||$subject->getRoles()[0]==self::ROLE_CAISSIER){
-                return false;
+     
+        if($this->tokenStorage->getToken()->getRoles()[0]==self::ROLE_SUPER_ADMIN){
+            if ($subject->getRoles()[0]==self::ROLE_USER_PARTENAIRE || $subject->getRoles()[0]==self::ROLE_ADMIN_PARTENAIRE)
+            {
+                throw new \Exception(sprintf(self::NON));
             }
-
-
-
-        }elseif($this->tokenStorage->getToken()->getRoles()[0]==self::ROLE_ADMIN){
-
-            if ($subject->getRoles()[0]==self::ROLE_SUPER_ADMIN || $subject->getRoles()[0]==self::ROLE_ADMIN){
-                return false;
+        }
+        if($this->tokenStorage->getToken()->getRoles()[0]==self::ROLE_CAISSIER){
+            throw new \Exception(sprintf(self::NON));
+        }
+        
+        elseif($this->tokenStorage->getToken()->getRoles()[0]==self::ROLE_ADMIN){
+            if ($subject->getRoles()[0]==self::ROLE_SUPER_ADMIN || $subject->getRoles()[0]==self::ROLE_ADMIN||
+             $subject->getRoles()[0]==self::ROLE_USER_PARTENAIRE|| $subject->getRoles()[0]==self::ROLE_ADMIN_PARTENAIRE){
+                throw new \Exception(sprintf(self::NON));
 
         }
 
@@ -68,13 +71,21 @@ class UserVoter extends Voter
 
                 
         }elseif($this->tokenStorage->getToken()->getRoles()[0]==self::ROLE_PARTENAIRE){
-
             if ($subject->getRoles()[0]==self::ROLE_SUPER_ADMIN || $subject->getRoles()[0]==self::ROLE_ADMIN|| $subject->getRoles()[0]==self::ROLE_PARTENAIRE
             || $subject->getRoles()[0]==self::ROLE_CAISSIER)
             {
-                return false;
+                throw new \Exception(sprintf(self::NON));
             }
         }
+        
+        elseif($this->tokenStorage->getToken()->getRoles()[0]==self::ROLE_USER_PARTENAIRE){
+            if ($subject->getRoles()[0]==self::ROLE_SUPER_ADMIN || $subject->getRoles()[0]==self::ROLE_ADMIN|| $subject->getRoles()[0]==self::ROLE_PARTENAIRE
+            || $subject->getRoles()[0]==self::ROLE_CAISSIER || $subject->getRoles()[0]==self::ROLE_ADMIN_PARTENAIRE )
+            {
+                throw new \Exception(sprintf(self::NON));
+            }
+        }
+
 
         
         $user = $token->getUser();
@@ -89,20 +100,26 @@ class UserVoter extends Voter
 
 
             case'EDIT':
-            if ($this->security->isGranted(self::ROLE_ADMIN)){
+            if ($this->security->isGranted(self::ROLE_ADMIN)|| $this->security->isGranted(self::ROLE_SUPER_ADMIN)|| $this->security->isGranted(self::ROLE_PARTENAIRE ) 
+            ||$this->security->isGranted(self::ROLE_ADMIN_PARTENAIRE))
+            {
                 return true;
             }
             break;
 
 
             case'ADD':
-            if ($this->security->isGranted(self::ROLE_ADMIN) || $this->security->isGranted(self::ROLE_PARTENAIRE)){
+                if ($this->security->isGranted(self::ROLE_ADMIN)|| $this->security->isGranted(self::ROLE_SUPER_ADMIN)|| $this->security->isGranted(self::ROLE_PARTENAIRE ) 
+            ||$this->security->isGranted(self::ROLE_ADMIN_PARTENAIRE))
+            {
                 return true;
             }
             break;
 
             case'VIEW':
-            if ($this->security->isGranted(self::ROLE_ADMIN)){
+                if ($this->security->isGranted(self::ROLE_ADMIN)|| $this->security->isGranted(self::ROLE_SUPER_ADMIN)|| $this->security->isGranted(self::ROLE_PARTENAIRE ) 
+            ||$this->security->isGranted(self::ROLE_ADMIN_PARTENAIRE))
+            {
                 return true;
             }
             break;
@@ -111,7 +128,6 @@ class UserVoter extends Voter
 
             default:
 
-            throw new \Exception(sprintf('Impossible d\'accede "%s"', $attribute));
         break;
             
         }

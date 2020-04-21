@@ -29,19 +29,19 @@ return $data instanceof Transaction;
 */
 public function persist($data)
 {
-  
-    $retrait=array(
+
+  /*  $retrait=array(
         "Reçu"=>"kodo_Transfert",
          "Numero Transaction"=>$data->getId(),
         "Code Transaction:"=>$data->getCode(),
         "Nom De Recepteur:"=>$data->getPrenomBenef(),
-        "Montant:"=>$data->getMontant(),
+        "Montant:"=>$data->getMontant().'fcf',
         "Date Retrait"=>$data->getDateRetret(),
         );
-        $this->entityManager->persist($data);
-        $this->entityManager->flush();
-        return new JsonResponse($retrait); 
-    
+
+       return new JsonResponse($retrait); */
+      $this->entityManager->persist($data);
+      $this->entityManager->flush();
 }
 public function remove($data)
 {

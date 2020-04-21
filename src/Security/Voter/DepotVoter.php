@@ -56,6 +56,7 @@ class DepotVoter extends Voter
             return false;
         }
         
-       
+        throw new \Exception(sprintf('Acces non Autoriser!!'));
+
     }
 }

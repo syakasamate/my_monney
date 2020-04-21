@@ -32,47 +32,44 @@ private $repo;
     public function __invoke(Compte $data)
     {
 
-       //si le partenaire n'existe pas 
+        ##########CONTROLLER CREATION DE COMPTE################
+                     ###KODO TRANSFERT###
+
+       //POUR LE NOUVEAU PARTENAIRE
          if($data->getPartenaires()!=null){
-        // je crypte le mot de passe du propriaite du compte
+        //JE CRYPTE LE MOT DE PASSE 
        $userPasswor=$this->userPasswordEncoder->encodePassword($data->getPartenaires()->getUsers()[0],
         $data->getPartenaires()->getUsers()[0]->getPassword());
        $data->getPartenaires()->getUsers()[0]->SetPassword($userPasswor);
          
-       //j'initialise  le  Partenire
+       //J'INITIALISE LE  PARTENAIRE
        $partenaire=$this->repo->findByLibelle("ROLE_PARTENAIRE");
        $data->getPartenaires()->getUsers()[0]->setRole($partenaire);
          }
 
 
-        //j'initialise le contrat
+        //J'INITIALISE LE  CONTRANT
         $contrat1=$this->contrat->find(1);
-      // dd($contrat1);
-        //$contrat1=$contra_id[0]->getId();
-       $data->getPartenaires()->setContrat($contrat1);
+      // $data->getPartenaires()->setContrat($contrat1);
          
-        //j'initialise  le solde à 5000 00  l'or de la creation;
+        //j'initialise  le solde à 5000 00  l'or de la creation
         $solde=$data->getDepots()[0]->getMontant();
         if($solde<500000){
         throw new Exception("le montant à deposer ne doit pas etre inferieur à 50000");
         }else{
 
-        
+          //J'INITIALISE LE SOLDE DU COMPTE
         $data->setSolde($solde);
 
 
-        //j'initialise le user createur ici 
-        //  $usercreateur =$this->tokenStorage->getToken()->getUser()->getROL;
-         // $data->addUser($usercreateur);
-        //j'initialise le user createur ici 
-         // $role=$this->repo->findAll()[3]->getLibelle();
+        //J'INITILISE LE USER_CREATEUR 
           $usercreateur =$this->tokenStorage->getToken()->getUser();
           $data->setUsercreateur($usercreateur);
-
-
-       
+          $data->setNumero( date ( 'y' ). date ( 'm' ). '' . date ( 'd' ). date ( 'H' ). '' . date ( 'i' ). date ( ' s ' ));
+         $data->setPlafond($solde);
         
-        return $data;
+        
+          return $data;
         }
     } 
 }

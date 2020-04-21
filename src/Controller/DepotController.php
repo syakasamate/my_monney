@@ -23,7 +23,26 @@ protected $tokenStorage;
     public function __invoke(Depot $data)
     {
 
-   
+        ##########CONTROLLER CREATION DE COMPTE################
+                     ###KODO TRANSFERT###
+
+
+
+
+
+       //Je Recupere le Montant à Deposer
+        $montant=$data->getMontant();
+
+        //Je Recupere le solde de compte dans lequel on feras le depot
+        $montantCmopte=$data->getCompte()->getSolde();
+        $plafond=$data->getCompte()->getPlafond();
+
+        
+        //J'ajout au solde le montant à deposer
+        $somtotal=$montant+$montantCmopte;
+         $plafondtotal=$montant+$plafond;
+        $data->getCompte()->SetSolde($somtotal);  
+        $data->getCompte()->getPlafond($plafondtotal);
         return $data;
     }
 }

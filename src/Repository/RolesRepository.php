@@ -56,4 +56,46 @@ class RolesRepository extends ServiceEntityRepository
         ->getOneOrNullResult()
         ;
     }
+
+
+
+    public function findByLibelle2($value): ?Roles
+    {
+        return $this->createQueryBuilder('r')
+        ->andWhere('r.libelle = :val')
+        ->setParameter('val', $value)
+        ->getQuery()
+        ->getOneOrNullResult()
+        ;
+    }
+    public function findByLibelle3($value): ?Roles
+    {
+        return $this->createQueryBuilder('r')
+        ->andWhere('r.libelle = :val')
+        ->setParameter('val', $value)
+        ->getQuery()
+        ->getOneOrNullResult()
+        ;
+    }
+    public function findByLibelle4($value): ?Roles
+    {
+        return $this->createQueryBuilder('r')
+        ->andWhere('r.libelle = :val')
+        ->setParameter('val', $value)
+        ->getQuery()
+        ->getOneOrNullResult()
+        ;
+    }
+    public function findByLibelle5($value): ?Roles
+    {
+        return $this->createQueryBuilder('r')
+        ->andWhere('r.libelle = :val')
+        ->setParameter('val', $value)
+        ->getQuery()
+        ->getOneOrNullResult()
+        ;
+    }
+
+
+   
 }

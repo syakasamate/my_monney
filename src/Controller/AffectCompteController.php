@@ -1,6 +1,6 @@
 <?php
-namespace App\Controller;
 
+namespace App\Controller;
 use App\Entity\AffectCompte;
 use App\Repository\AffectCompteRepository;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -20,25 +20,33 @@ protected $tokenStorage;
     }
     public function __invoke(AffectCompte $data)
     {
-        $datefin=$data->getDateDebut();//nouveau à affecté
+        #####CONTROLE D'AFFECTATION DE COMPTE#######
+                  ######KODO TRANSFERT######
+
+
+      //impossible d'affecter  un Admin ou Super Admin à un Compte
+      $Role=$data->getUsers()->getRole()->getLibelle();
+      if($Role==self::ROLE_U_P || $Role==self::ROLE_A || $Role==self::ROLE_C || $Role==self::ROLE_P || $Role==self::ROLE_P_A){
+        throw new HttpException(403,' ce utilisateur  ne peut pas etre affecté à un  comptes !!');
+
+      }
+        $datedebut=$data->getDateDebut();//nouveau à affecté
+
+
           $d=$data->getUsers();
           $id=$this->affect->affectuser($d);
-
+           if($id!=null){
          $trouvefin= $id->getDateFin();//la date dejas affecé
          $trouveId= $id->getUsers()->getId();
-         $Role=$data->getUsers()->getRole()->getLibelle();
 
-         //Un utulisateur ne peut etre affecté qu'une seule fois dans une periode
-       if($trouveId!=null && $datefin>=$trouvefin ){
+
+         //Un utulisateur ne peut etre affecté à un Compte  qu'une seule fois dans une periode
+       if($trouveId!=null && $datedebut>=$trouvefin){
         throw new HttpException(403,'ce utilisateur est déjas affecté à un utilisateur pour cette periode !!');
 
        }
-          //impossible d'affecter  un Admin ou Super Admin à un Compte
-          elseif($Role==self::ROLE_U_P || $Role==self::ROLE_A || $Role==self::ROLE_C || $Role==self::ROLE_P || $Role==self::ROLE_P_A){
-            throw new HttpException(403,' ce utilisateur  ne peut pas etre affecté à un  comptes !!');
- 
-          }
-
+         
+        }
         return $data;
 
         

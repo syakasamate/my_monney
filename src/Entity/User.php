@@ -5,8 +5,15 @@ namespace App\Entity;
 use App\Entity\Partenaire;
 use Doctrine\ORM\Mapping as ORM;
 use App\Controller\UserController;
+use App\Controller\ImageController;
 use App\Controller\CompteController;
+use App\Controller\listeAController;
+use App\Controller\BloquerController;
+use App\Controller\getUserController;
+use App\Controller\listeUserController;
+use App\Controller\getOneUserController;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -18,30 +25,68 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 /** 
- *
- *
+ * 
  * @ApiResource(
- * 
- *  collectionOperations={
- * 
- *          
- *         "GET"={
- *               "access_control"="is_granted('VIEW', object)",
 
+ *  collectionOperations={
+ *  "listeUser"={
+ *         "method"="GET",
+ *         "path"="/listeUser",
+ *          "controller"=listeUserController::class,
+ *           "normalization_context"={"groups"={"write"}},
+ * },
+ *         "post_image"={
+ *         "method"="POST",
+ *         "path"="/users/{id}",
+ *          "controller"=ImageController::class,
+ *          "normalization_context"={"groups"={"write"}},
+  *              "deserialize"=false,
+ *             "openapi_context"={
+ *                 "requestBody"={
+ *                     "content"={
+ *                         "multipart/form-data"={
+ *                             "schema"={
+ *                                 "type"="object",
+ *                                 "properties"={
+ *                                     "file"={
+ *                                         "type"="string",
+ *                                         "format"="binary"
+ *                                     }
+ *                                 }
+ *                             }
+ *                         }
+ *                     }
+ *                 }
+ *             }
+
+ * 
+ *     },
+ *
+ * 
+ *         "GET"={
+ *              
+  *                    "controller"=getUserController::class,                
 *               },
 *               "POST"={
 *                   "controller"=UserController::class,
-*                    "access_control"="is_granted('ADD', object)",
+*   
 *                }
 * 
 *     },
 *  itemOperations={
+  *   "bloquer"={
+ *         "method"="PUT",
+ *         "path"="/bloquerusers/{id}",
+ *          "controller"=BloquerController::class,
+ *           "normalization_context"={"groups"={"write"}},
+ * },
 *          "GET"={
-*                   "access_control"="is_granted('VIEW',  previous_object)",
+*                    "controller"=getOneUserController::class,                
 *               },
+*          
 *          "put"={
- *              "access_control"="is_granted('EDIT', previous_object)",
- *          },
+*       "normalization_context"={"groups"={"write"}},
+*       }
  *     },
  *  
  * )
@@ -135,6 +180,13 @@ class User implements UserInterface
      private $transaction;
     
 
+     /**
+      * 
+      * @ORM\Column(name="image",type="blob",nullable=true)
+      */
+     private $image;
+    
+     private $decodedData;
     public function __construct()
     {
         $this->comptes = new ArrayCollection();
@@ -364,6 +416,19 @@ class User implements UserInterface
     public function getTransaction(): Collection
     {
         return $this->transaction;
+    }
+
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    public function setImage($image): self
+    {
+        $this->image = $image;
+        $this->decodedData = base64_decode($image);
+
+        return $this;
     }
 
    

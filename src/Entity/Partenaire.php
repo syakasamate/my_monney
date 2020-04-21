@@ -12,14 +12,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PartenaireRepository")
  * @ApiResource(
- * normalizationContext={"groups"={"read"}},
+ *normalizationContext={"groups"={"read"}},
  *denormalizationContext={"groups"={"write"}},
    
  *  collectionOperations={
  * 
  *          
  *         "GET"={
- *               "access_control"="is_granted('VIEW', object)",
 
 *               },
 *               "POST"={
@@ -30,7 +29,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 *     },
 *  itemOperations={
 *          "GET"={
-*                   "access_control"="is_granted('VIEW',  previous_object)",
 *               },
 *          "put"={
  *              "access_control"="is_granted('EDIT', previous_object)",
@@ -182,12 +180,7 @@ class Partenaire
         return $this->contrat;
     }
 
-    public function setContrat(Contrat $contrat): self
-    {
-        $this->contrat = $contrat;
-
-        return $this;
-    }
+   
 
    
 

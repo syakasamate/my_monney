@@ -39,9 +39,9 @@ class CompteVoter extends Voter
         return in_array($attribute, ['EDIT','ADD','VIEW'])
             && $subject instanceof   Compte;
     }
-    /** @var User $subject */
+    /** @var Compte $subject */
      /**
-        * @param User $subject
+        * @param Compte $subject
         */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
@@ -49,41 +49,16 @@ class CompteVoter extends Voter
             return true;
         }
         
+        
         $user = $token->getUser();
         // if the user is anonymous, do not grant access
         if (!$user instanceof User) {
             return false;
         }
         
-       // ... (check conditions and return true to grant permission) ...
-       switch ($attribute) {
 
 
-        case'EDIT':
-        if ($this->security->isGranted(self::ROLE_ADMIN)){
-            return true;
-        }
-        break;
-
-
-        case'ADD':
-        if ($this->security->isGranted(self::ROLE_ADMIN)){
-            return true;
-        }
-        break;
-
-        case'VIEW':
-        if ($this->security->isGranted(self::ROLE_ADMIN)){
-            return true;
-        }
-        break;
-
-        return false;
-        
-    }
-
-
-    throw new \Exception(sprintf('Impossible d\'accede "%s"', $attribute));
+    throw new \Exception(sprintf('Acces non Autoriser!!'));
 }
     
 }

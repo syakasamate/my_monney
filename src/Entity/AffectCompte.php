@@ -11,10 +11,10 @@ use ApiPlatform\Core\Annotation\ApiResource;
  * @ApiResource(
  * collectionOperations={
  *         "GET"={
- *               "access_control"="is_granted('VIEW', object)",
 
 *               },
 *               "POST"={
+ *                  "access_control"="is_granted('ADD', object)",
  *                  "controller"=AffectCompteController::class,
 
 *                }
@@ -22,7 +22,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 *     },
 *  itemOperations={
 *          "GET"={
-*                "access_control"="is_granted('VIEW',  previous_object)",
 *               },
 *          "put"={
  *              "access_control"="is_granted('EDIT', previous_object)",

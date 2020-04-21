@@ -10,6 +10,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use DateTime;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CompteRepository")
@@ -19,7 +20,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * collectionOperations={
  *          
  *         "GET"={
-
 *               },
 *               "POST"={
 *                    "controller"=CompteController::class,
@@ -37,26 +37,30 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *     },
  *  
  * )
+ *
  */
 class Compte
 {
     /**
+     * @Groups({"read"})
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
     private $id;
 
+  
     /**
+     * @Groups({"read"})
      * @ORM\Column(type="string", length=255)
-     * @ApiFilter(SearchFilter::class)
      */
     private $numero;
 
     /**
+     * @Groups({"read"})
      * @ORM\Column(type="date")
      */
-    private $date_creation;
+    private $datecreation;
 
    
 
@@ -71,12 +75,12 @@ class Compte
     /**
      * @Groups({"read", "write"})
      * @ORM\ManyToOne(targetEntity="App\Entity\Partenaire", inversedBy="comptes",cascade={"persist"})
-     *@ApiFilter(SearchFilter::class, properties={"partenaires.ninea"})
+     *@ApiFilter(SearchFilter::class, properties={"partenaires.ninea":"exact"})
      */
     private $partenaires;
 
     /**
-     *  
+     * @Groups({"read"})
      * @ORM\Column(type="float")
      */
     private $solde;
@@ -96,13 +100,19 @@ class Compte
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="comptesEnv")
      */
-    private $transaction;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="comptesEnv")
-     */
     private $transactions;
 
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $plafond;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="comptesRet")
+     */
+    private $transaction;
+
+   
    
 
     public function __construct()
@@ -111,6 +121,7 @@ class Compte
         $this->affectComptes = new ArrayCollection();
         $this->transaction = new ArrayCollection();
         $this->transactions = new ArrayCollection();
+        $this->datecreation=new DateTime();
     }
 
     public function getId(): ?int
@@ -132,12 +143,12 @@ class Compte
 
     public function getDateCreation(): ?\DateTimeInterface
     {
-        return $this->date_creation;
+        return $this->datecreation;
     }
 
-    public function setDateCreation(\DateTimeInterface $date_creation): self
+    public function setDateCreation(\DateTimeInterface $datecreation): self
     {
-        $this->date_creation = $date_creation;
+        $this->datecreation = $datecreation;
 
         return $this;
     }
@@ -272,6 +283,26 @@ class Compte
         }
 
         return $this;
+    }
+
+    public function getPlafond(): ?float
+    {
+        return $this->plafond;
+    }
+
+    public function setPlafond(float $plafond): self
+    {
+        $this->plafond = $plafond;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Transaction[]
+     */
+    public function getTransaction(): Collection
+    {
+        return $this->transaction;
     }
 
   

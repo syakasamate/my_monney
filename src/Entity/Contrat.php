@@ -18,8 +18,8 @@ class Contrat
      */
     private $id;
 
-    /**
-     * 
+    /** 
+     * * 
      * @ORM\Column(type="text")
      */
     private $termes;
@@ -40,4 +40,6 @@ class Contrat
 
         return $this;
     }
+
+    
 }

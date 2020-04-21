@@ -8,6 +8,7 @@ use App\Repository\ContratRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
+use App\Entity\Contrat;
 use App\Repository\PartenaireRepository;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -40,33 +41,33 @@ public function persist($data)
 {
     
 
- $num=$this->repo->CompteNum();
+ /*$num=$this->repo->CompteNum();
  $numero = 'NCT' . sprintf("%06d", $num[1]+ 1) ;
 $data->setNumero($numero);
 
-$data->setDateCreation(new \DateTime());
+$data->setDateCreation(new \DateTime());*/
 
-$contrat1=$this->contrat->find(1);
- $data->getPartenaires()->setContrat($contrat1);
+
 
 //on genere le contrat pour les nouveau partenaire
+$contrat1=$this->contrat->find(1);
  $id=$data->getPartenaires()->getId();
  $parte=$this->part->PartExist($id);
+   
 
- 
- 
-$this->entityManager->persist($data);
-$this->entityManager->flush();
-if( $parte==null){
+
+if($parte==null){
     $contrat=array(
         "numero de compte"=>$data->getNumero(),
         "createur de de comte"=>$data->getUsercreateur()->getUsername(),
         "date contrat"=>$data->getDateCreation(),
-       "les les Articles"=>$contrat1->getTermes()
+       "les les Articles"=>str_replace("#nom",  $data->getPartenaires()->getUsers()[0]->getNom(), $contrat1->getTermes())
     );
 return new JsonResponse($contrat); 
  }
-
+ 
+ $this->entityManager->persist($data);
+ $this->entityManager->flush();
 }
 public function remove($data)
 {

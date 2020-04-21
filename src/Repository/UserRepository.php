@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query\Expr\Select;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -47,4 +48,26 @@ class UserRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function listSupAdmin($value): ?User
+    {
+        return $this->createQueryBuilder('u')
+             ->select("r.libelle from role r")
+            ->andWhere('u.roles=:val')
+            ->setParameter('val',$value)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+
+    public function   image()
+    {
+        $rawSql = "SELECT u.image FROM   user  AS i";
+    
+        $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
+        $stmt->execute([]);
+    
+        return $stmt->fetchAll();
+    }
 }

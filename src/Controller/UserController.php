@@ -28,18 +28,25 @@ private $validator;
 
     public function __invoke(User $data): User
     {
-        if ($data->getPassword()) {
+    
+
+          if ($data->getPassword()) {
             $data->setPassword(
                 $this->userPasswordEncoder->encodePassword($data, $data->getPassword())
             );
             $data->eraseCredentials();
          }
-
+          
+          $data->setIsActive(1);
+           if($this->tokenStorage->getToken()->getRoles()[0]=="ROLE_PARTENAIRE"){
             $partenaire =$this->tokenStorage->getToken()->getUser()->getPartenaire();
             $data->setPartenaire($partenaire);
-  
+         
+           }
            
         return $data;
     }
+
+
 }
 ?>

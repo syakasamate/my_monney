@@ -2,32 +2,29 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use App\Controller\DepotController;
 use ApiPlatform\Core\Annotation\ApiResource;
-use DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\DepotRepository")
  * @ApiResource(
+ *   denormalizationContext={"disable_type_enforcement"=false},
  * collectionOperations={
  *         "GET"={
- *               "access_control"="is_granted('VIEW', object)",
 
 *               },
 *               "POST"={
- *                  "access_control"="is_granted('ADD', object)",
 
 *                }
 * 
 *     },
 *  itemOperations={
 *          "GET"={
-*                "access_control"="is_granted('VIEW',  previous_object)",
 *               },
 *          "put"={
- *              "access_control"="is_granted('EDIT', previous_object)",
  *          },
  *     },
  * )
@@ -42,8 +39,9 @@ class Depot
     private $id;
 
     /**
+ 
      * @Groups({"read", "write"})
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="float")
      * 
      */
     private $montant;
